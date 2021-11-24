@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Livro;
 use Illuminate\Http\Request;
+use App\Http\Requests\LivroRequest;
 
 class LivroController extends Controller
 {
@@ -37,21 +38,13 @@ class LivroController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(LivroRequest $request)
     {
-       $request->validate([
-           'titulo'=> 'required',
-           'autor'=> 'required',
-           'isbn'=> 'required|integer',
-       ]);
-        $livro = new Livro;
-       $livro->titulo= $request->titulo;
-       $livro->autor= $request->autor;
-       $livro->isbn= $request->isbn;
-       $livro->save();
-       #return redirect("/livros/{$livro->id}");
-       return redirect("/livros");
-
+        $validated = $request->validated();
+        $livro = Livro::create($request->all());
+        request()->session()->flash('alert-success','Livro Cadastrado com sucesso!');
+       return redirect("/livros/{$livro->id}");
+       
     }
 
     /**
@@ -85,19 +78,13 @@ class LivroController extends Controller
      * @param  \App\Models\Livro  $livro
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Livro $livro)
+    public function update(LivroRequest $request, Livro $livro)
     {
-        $request->validate([
-            'titulo'=> 'required',
-            'autor'=> 'required',
-            'isbn'=> 'required|integer',
-        ]);
-        $livro->titulo= $request->titulo;
-       $livro->autor= $request->autor;
-       $livro->isbn= $request->isbn;
-       $livro->save();
-       #return redirect("/livros/{$livro->id}");
-       return redirect("/livros");
+        $validated = $request->validated();
+        $livro->update($validated);
+        request()->session()->flash('alert-info','Livro Atualizado com sucesso!');
+       return redirect("/livros/{$livro->id}");
+       
     }
 
     /**
